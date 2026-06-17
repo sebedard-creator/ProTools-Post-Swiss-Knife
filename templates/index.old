@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cue Sheet to PDF Converter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            background: #f8f9ff;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: #f0f2ff;
+        }
+
+        .upload-area.dragover {
+            border-color: #764ba2;
+            background: #e8ebff;
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+
+        .upload-text {
+            color: #333;
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .upload-hint {
+            color: #999;
+            font-size: 14px;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .file-info {
+            background: #e8f5e9;
+            border: 1px solid #81c784;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .file-info.show {
+            display: block;
+        }
+
+        .file-name {
+            color: #2e7d32;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .file-size {
+            color: #66bb6a;
+            font-size: 14px;
+        }
+
+        .format-selection {
+            margin-bottom: 20px;
+        }
+
+        .format-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .format-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: flex-start;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .radio-option:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .radio-option input[type="radio"] {
+            margin-top: 2px;
+            margin-right: 12px;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+
+        .radio-option input[type="radio"]:checked + .radio-label {
+            color: #667eea;
+        }
+
+        .radio-option:has(input[type="radio"]:checked) {
+            border-color: #667eea;
+            background: #f0f2ff;
+        }
+
+        .radio-label {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+        }
+
+        .radio-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .radio-desc {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+
+        .flash {
+            padding: 12px 20px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .flash.error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef5350;
+        }
+
+        .flash.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #81c784;
+        }
+
+        .processing {
+            text-align: center;
+            display: none;
+            margin-top: 20px;
+        }
+
+        .processing.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #999;
+            font-size: 12px;
+        }
+
+        .help-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            margin-left: 8px;
+            transition: color 0.3s ease;
+        }
+
+        .help-link:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 90%;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin: 0;
+        }
+
+        .close-button {
+            color: #999;
+            font-size: 32px;
+            font-weight: 300;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            line-height: 32px;
+            text-align: center;
+            transition: color 0.3s ease;
+        }
+
+        .close-button:hover {
+            color: #333;
+        }
+
+        .modal-body {
+            color: #333;
+            line-height: 1.8;
+        }
+
+        .help-item {
+            margin-bottom: 20px;
+            padding-left: 20px;
+        }
+
+        .help-item-title {
+            font-weight: 700;
+            font-size: 15px;
+            margin-bottom: 5px;
+            color: #667eea;
+        }
+
+        .help-item-desc {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 ProTools Post Swiss Knife</h1>
+        <p class="subtitle">
+            Pour faire tout ce que ProTools ne fait pas.
+            <a href="#" class="help-link" id="helpLink">HELP</a>
+        </p>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for message in messages %}
+                        <div class="flash error">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <form id="uploadForm" method="POST" action="/upload" enctype="multipart/form-data">
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">📄</div>
+                <div class="upload-text">Click to upload or drag and drop</div>
+                <div class="upload-hint">Pro Tools cue sheets (.txt), CSV (.csv), or EDL (.edl) files</div>
+                <input type="file" id="fileInput" name="file" accept=".txt,.csv,.edl" required>
+            </div>
+
+            <div class="file-info" id="fileInfo">
+                <div class="file-name" id="fileName">No file selected</div>
+                <div class="file-size" id="fileSize"></div>
+            </div>
+
+            <div class="format-selection">
+                <div class="format-title">Output Format:</div>
+                <div class="format-options">
+                    <label class="radio-option">
+                        <input type="radio" name="format" value="markers" checked>
+                        <span class="radio-label">
+                            <span class="radio-title">📍 MARKERS</span>
+                            <span class="radio-desc">Extract markers to compact PDF (Timecode + Name) (.txt → .pdf)</span>
+                        </span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="format" value="spotting">
+                        <span class="radio-label">
+                            <span class="radio-title">📄 SPOTTING</span>
+                            <span class="radio-desc">PDF with full details including mute status (.txt → .pdf)</span>
+                        </span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="format" value="adr">
+                        <span class="radio-label">
+                            <span class="radio-title">📊 ADR CHARACTER ORDER</span>
+                            <span class="radio-desc">Excel spreadsheet (Start | End | Duration | Clip Name | Comment) (.txt → .xlsx)</span>
+                        </span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="format" value="adr_tc_order">
+                        <span class="radio-label">
+                            <span class="radio-title">🕐 ADR TC ORDER</span>
+                            <span class="radio-desc">Excel spreadsheet de tous les cues triés par timecode (Cue | Personnage | TC In | TC Out | Durée | Texte | Commentaire) (.txt → .xlsx)</span>
+                        </span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="format" value="adr_recording">
+                        <span class="radio-label">
+                            <span class="radio-title">🎙️ ADR RECORDING</span>
+                            <span class="radio-desc">Multiple PDFs in ZIP (Actor + Technician sheets for each track) (.txt → .zip)</span>
+                        </span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="format" value="csv_to_edl">
+                        <span class="radio-label">
+                            <span class="radio-title">🔄 CSV TO EDL CONVERTER</span>
+                            <span class="radio-desc">Convert CSV cue sheet to Pro Tools EDL format (.csv → .edl)</span>
+                        </span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="format" value="edl_to_aaf">
+                        <span class="radio-label">
+                            <span class="radio-title">🎵 EDL TO AAF CONVERTER</span>
+                            <span class="radio-desc">Convert EDL to Pro Tools-compatible AAF format (.edl → .aaf)</span>
+                        </span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="format" value="csv_to_aaf">
+                        <span class="radio-label">
+                            <span class="radio-title">🚀 CSV TO AAF CONVERTER</span>
+                            <span class="radio-desc">Direct CSV to AAF conversion with mode selection (.csv → .aaf)</span>
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Mode selection for CSV to AAF (hidden by default) -->
+                <div id="modeSelection" style="display: none; margin-top: 15px; padding: 15px; background: #f0f2ff; border-radius: 10px; border: 2px solid #667eea;">
+                    <div style="font-size: 14px; font-weight: 600; color: #333; margin-bottom: 10px;">Mode de sortie AAF:</div>
+                    <div style="display: flex; gap: 15px;">
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="radio" name="mode" value="production" checked style="margin-right: 8px;">
+                            <span style="font-size: 14px; color: #333;">Production</span>
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="radio" name="mode" value="conception" style="margin-right: 8px;">
+                            <span style="font-size: 14px; color: #333;">Conception</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="button" id="convertBtn" disabled>Convert File</button>
+        </form>
+
+        <div class="processing" id="processing">
+            <div class="spinner"></div>
+            <p>Converting your cue sheet...</p>
+        </div>
+
+        <div class="footer">
+            Made for converting Avid Pro Tools cue sheets<br>
+            © Sébastien Bédard - 2025 - v1.0
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="helpModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">📖 Guide d'utilisation</h2>
+                <button class="close-button" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="help-item">
+                    <div class="help-item-title">📍 MARKERS</div>
+                    <div class="help-item-desc">
+                        Crée un PDF des markers à l'aide de la fonction Export Session Text de Protools 
+                        (tout désélectionner sauf "Include Markers")
+                    </div>
+                </div>
+
+                <div class="help-item">
+                    <div class="help-item-title">📄 SPOTTING</div>
+                    <div class="help-item-desc">
+                        Crée un PDF des tracks sélectionnées à l'aide de la fonction Export Session Text de Protools 
+                        (tout désélectionner sauf "Include Track EDLs")
+                    </div>
+                </div>
+
+                <div class="help-item">
+                    <div class="help-item-title">📊 ADR CHARACTER ORDER</div>
+                    <div class="help-item-desc">
+                        Crée un fichier Excel des tracks sélectionnées à l'aide de la fonction Export Session Text de Protools 
+                        (tout désélectionner sauf "Include Track EDLs"). Il suit la nomenclature établie par EdiCue et PGPT des clips name. 
+                        Il change les couleurs des cellules automatiquement si les mots clés suivants sont dans le clip name: 
+                        "Validation", "TBC", et "TBW"
+                    </div>
+                </div>
+
+                <div class="help-item">
+                    <div class="help-item-title">🕐 ADR TC ORDER</div>
+                    <div class="help-item-desc">
+                        Crée un fichier Excel avec tous les cues de tous les personnages regroupés et triés par timecode de départ. 
+                        Chaque cue est identifié par un numéro séquentiel par personnage (ex: VAL001, VAL002…) 
+                        et inclut le nom du personnage, les timecodes, la durée, le texte et le commentaire.
+                    </div>
+                </div>
+
+                <div class="help-item">
+                    <div class="help-item-title">🎙️ ADR RECORDING</div>
+                    <div class="help-item-desc">
+                        Crée un fichier PDF des tracks sélectionnées à l'aide de la fonction Export Session Text de Protools 
+                        (tout désélectionner sauf "Include Track EDLs"). Il suit la nomenclature établie par EdiCue et PGPT des clips name. 
+                        Il met en italique le texte entre parenthèses. Crée des cue pour le talent et le directeur de plateau.
+                    </div>
+                </div>
+
+                <div class="help-item">
+                    <div class="help-item-title">🔄 CSV TO EDL CONVERTER</div>
+                    <div class="help-item-desc">
+                        Crée un EDL à partir d'un fichier Excel (UTF-8) de la template utilisée pour les notes de playback.
+                    </div>
+                </div>
+
+                <div class="help-item">
+                    <div class="help-item-title">🎵 EDL TO AAF CONVERTER</div>
+                    <div class="help-item-desc">
+                        Crée un AAF à partir d'un fichier EDL de la template utilisée pour les notes de playback.
+                    </div>
+                </div>
+
+                <div class="help-item">
+                    <div class="help-item-title">🚀 CSV TO AAF CONVERTER</div>
+                    <div class="help-item-desc">
+                        Crée un AAF à partir d'un fichier Excel (UTF-8) de la template utilisée pour les notes de playback.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const convertBtn = document.getElementById('convertBtn');
+        const uploadForm = document.getElementById('uploadForm');
+        const processing = document.getElementById('processing');
+        const modeSelection = document.getElementById('modeSelection');
+
+        // Help modal functionality
+        const helpLink = document.getElementById('helpLink');
+        const helpModal = document.getElementById('helpModal');
+        const closeModal = document.getElementById('closeModal');
+
+        helpLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            helpModal.style.display = 'block';
+        });
+
+        closeModal.addEventListener('click', () => {
+            helpModal.style.display = 'none';
+        });
+
+        // Close modal when clicking outside of it
+        window.addEventListener('click', (e) => {
+            if (e.target === helpModal) {
+                helpModal.style.display = 'none';
+            }
+        });
+
+        // Close modal on Escape key
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && helpModal.style.display === 'block') {
+                helpModal.style.display = 'none';
+            }
+        });
+
+        // Click to upload
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        // File selection
+        fileInput.addEventListener('change', (e) => {
+            handleFileSelect(e.target.files[0]);
+        });
+
+        // Drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            
+            const file = e.dataTransfer.files[0];
+            const allowedExtensions = ['.txt', '.csv', '.edl'];
+            const isValid = allowedExtensions.some(ext => file.name.toLowerCase().endsWith(ext));
+            
+            if (file && isValid) {
+                fileInput.files = e.dataTransfer.files;
+                handleFileSelect(file);
+            } else {
+                alert('Please select a .txt, .csv, or .edl file');
+            }
+        });
+
+        function handleFileSelect(file) {
+            if (file) {
+                fileName.textContent = file.name;
+                fileSize.textContent = formatFileSize(file.size);
+                fileInfo.classList.add('show');
+                
+                // Validate file type against selected format
+                validateFileType(file);
+            }
+        }
+
+        function validateFileType(file) {
+            const format = document.querySelector('input[name="format"]:checked').value;
+            const fileExt = '.' + file.name.split('.').pop().toLowerCase();
+            
+            let isValid = false;
+            let expectedType = '';
+            
+            if (format === 'csv_to_edl' || format === 'csv_to_aaf') {
+                isValid = fileExt === '.csv';
+                expectedType = '.csv';
+            } else if (format === 'edl_to_aaf') {
+                isValid = fileExt === '.edl';
+                expectedType = '.edl';
+            } else {
+                // markers, spotting, adr, adr_recording all use .txt files
+                isValid = fileExt === '.txt';
+                expectedType = '.txt';
+            }
+            
+            if (isValid) {
+                convertBtn.disabled = false;
+                fileInfo.style.background = '#e8f5e9';
+                fileInfo.style.borderColor = '#81c784';
+            } else {
+                convertBtn.disabled = true;
+                fileInfo.style.background = '#ffebee';
+                fileInfo.style.borderColor = '#ef5350';
+                alert(`Please upload a ${expectedType} file for this conversion type.`);
+            }
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        // Form submission
+        uploadForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Update form action based on selected format
+            const format = document.querySelector('input[name="format"]:checked').value;
+            let action = '/upload';
+            
+            if (format === 'markers') {
+                action = '/markers';
+            } else if (format === 'csv_to_edl') {
+                action = '/csv-to-edl';
+            } else if (format === 'edl_to_aaf') {
+                action = '/edl-to-aaf';
+            } else if (format === 'csv_to_aaf') {
+                action = '/csv-to-aaf';
+            }
+            
+            uploadForm.action = action;
+            
+            convertBtn.disabled = true;
+            convertBtn.textContent = 'Converting...';
+            processing.classList.add('show');
+            
+            // Submit the form
+            uploadForm.submit();
+        });
+
+        // Update button text and form validation based on selected format
+        const formatRadios = document.querySelectorAll('input[name="format"]');
+        formatRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                const format = e.target.value;
+                
+                // Show/hide mode selection for CSV to AAF
+                if (format === 'csv_to_aaf') {
+                    modeSelection.style.display = 'block';
+                } else {
+                    modeSelection.style.display = 'none';
+                }
+                
+                // Update button text
+                if (format === 'markers') {
+                    convertBtn.textContent = 'Export Markers';
+                } else if (format === 'adr') {
+                    convertBtn.textContent = 'Convert to Excel';
+                } else if (format === 'adr_tc_order') {
+                    convertBtn.textContent = 'Generate TC Order Excel';
+                } else if (format === 'adr_recording') {
+                    convertBtn.textContent = 'Generate ADR PDFs';
+                } else if (format === 'csv_to_edl') {
+                    convertBtn.textContent = 'Convert to EDL';
+                } else if (format === 'edl_to_aaf') {
+                    convertBtn.textContent = 'Convert to AAF';
+                } else if (format === 'csv_to_aaf') {
+                    convertBtn.textContent = 'Convert to AAF';
+                } else {
+                    convertBtn.textContent = 'Convert to PDF';
+                }
+                
+                // Revalidate file if one is selected
+                if (fileInput.files.length > 0) {
+                    validateFileType(fileInput.files[0]);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
