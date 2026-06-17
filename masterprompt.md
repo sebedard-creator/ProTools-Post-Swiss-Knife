@@ -1,14 +1,15 @@
-# Master Prompt - PT SK 4.0
+# Master Prompt - PT SK 4.1
 
 ## Context
-PT SK 4.0 (ProTools Post Swiss Knife 4.0) is a web application designed to convert Avid Pro Tools cue sheet files (.txt and .csv) into formats suitable for ADR (Automated Dialogue Replacement), Spotting, and general post-production tasks.
+PT SK 4.1 (ProTools Post Swiss Knife 4.1) is a web application designed to convert Avid Pro Tools cue sheet files (.txt and .csv) into formats suitable for ADR (Automated Dialogue Replacement), Spotting, and general post-production tasks.
 
 ## Architecture
 - **Web Framework**: Flask
 - **PDF Generation**: ReportLab
 - **Excel Generation**: OpenPyXL
 - **AAF Generation**: pyaaf2
-- **Environment**: Fully self-contained inside `Y:\PT SK 2.0\venv`.
+- **Environment**: Fully self-contained inside `Y:\PT SK 2.0\venv` for local dev. Deployed on Render.com using `gunicorn`.
+- **File Processing**: Uses `tempfile.TemporaryDirectory` and `io.BytesIO` to handle concurrent users in the cloud securely without local file persistence.
 
 ### Modules
 - `app.py`: Flask initialization and routing.

@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.1.0] - Web Deployment & CI/CD
+- Refactorisation complète du système de gestion de fichiers dans `app.py` pour supporter les accès concurrents. Utilisation de `tempfile.TemporaryDirectory` et `io.BytesIO` pour un traitement 100% en mémoire vive (RAM) évitant les collisions.
+- Ajout du fichier `.gitignore` et `requirements.txt` pour préparer le déploiement sur les serveurs cloud.
+- Déploiement en ligne continu via Render.com couplé à un repository GitHub.
+- Ajout du lien vers le code source GitHub dans le bas de la page web.
+
 ## [4.0.0] - XLS to AAF Markers Stable Release
 - Finalisation de la fonctionnalité d'export de marqueurs depuis un fichier Excel vers un fichier AAF pour Pro Tools.
 - Ajout d'une piste audio factice (Dummy Audio) pour forcer Pro Tools à lire la piste d'événements.
