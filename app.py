@@ -17,9 +17,7 @@ app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 app.secret_key = 'your-secret-key-change-this-in-production'
 
-ALLOWED_EXTENSIONS = {'txt', 'csv', 'edl'}
-
-ALLOWED_EXTENSIONS = {'txt', 'csv', 'edl'}
+ALLOWED_EXTENSIONS = {'txt', 'csv', 'edl', 'xls', 'xlsx'}
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS

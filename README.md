@@ -1,79 +1,48 @@
-# 🎬 Cue Sheet Converter
+# 🎬 ProTools Post Swiss Knife (PT SK 4.1)
 
-A simple web application that converts Avid Pro Tools cue sheet text files into formatted PDFs or Excel spreadsheets.
+Une application web complète conçue pour convertir les exports de session Avid Pro Tools (.txt, .csv, .xls, .xlsx) vers de multiples formats prêts pour la post-production (PDF, Excel, AAF, EDL).
 
-## 📁 What's Included
+## 📁 Fonctionnalités (Ce que fait le Swiss Knife)
 
-- `app.py` - The main application
-- `requirements.txt` - Required Python libraries
-- `templates/index.html` - Web interface
-- `INSTALLATION_GUIDE.md` - Complete step-by-step installation instructions
-- `START_WINDOWS.bat` - Quick start script for Windows
-- `START_MAC.sh` - Quick start script for Mac
-- `example_output_FIXED.pdf` - Example PDF output (SPOTTING format)
-- `example_ADR_VALIDATION.xlsx` - Example Excel output (ADR VALIDATION format)
+L'application offre une interface simple (glisser-déposer) permettant de convertir des fichiers en un clic.
 
-## 🚀 Quick Start
+### 📍 Markers & Spotting (Entrée: `.txt`)
+- **MARKERS** : Exporte les markers d'une session Pro Tools en PDF compact (Timecode + Nom).
+- **SPOTTING** : Crée un PDF listant tous les clips par track avec timecodes IN/OUT, durée, nom du clip et état muté/non-muté.
 
-### First Time Setup:
-1. Read `INSTALLATION_GUIDE.md` for complete installation instructions
-2. Install Python (if not already installed)
-3. Install dependencies: `pip install -r requirements.txt`
+### 🎙️ ADR (Entrée: `.txt`)
+- **ADR CHARACTER ORDER** : Crée un fichier Excel organisé par personnage. Chaque section affiche le nom suivi du nombre de lignes, puis les cues avec timecodes, durée, texte et commentaire.
+- **ADR TC ORDER** : Crée un fichier Excel avec tous les cues de tous les personnages dans une liste unique triée par timecode.
+- **ADR RECORDING** : Génère un ZIP contenant deux PDFs par personnage (feuille ACTEUR et feuille TECHNICIEN avec prise alternative). 
 
-### Daily Use:
+### 🔄 Conversions & AAF
+- **CSV VERS EDL** : Convertit un fichier CSV (provenant d'une template de notes) en EDL Pro Tools (.edl).
+- **CSV VERS PDF (TC ORDER)** : Convertit un CSV de notes en PDF trié par timecode.
+- **CSV VERS AAF (FAKE AUDIO TRACKS)** : Conversion directe d'un CSV vers un AAF contenant des clips audio vides, avec suffixe de mode (Production ou Conception).
+- **XLS VERS AAF MARKERS** : Génère une piste de marqueurs (Memory Locations) à 23.976 fps directement à partir d'un fichier Excel. Recherche automatiquement les colonnes et contourne les limites de caractères de Pro Tools.
 
-**Windows:** 
-- **With window:** Double-click `START_WINDOWS.bat`
-- **Hidden (no window):** Double-click `START_HIDDEN.vbs`
-- **Auto-open browser:** Double-click `START_AND_OPEN.bat`
+## 🚀 Utilisation (Local vs Cloud)
 
-**Mac:** 
-- Double-click `START_MAC.sh` (or run `./START_MAC.sh` in Terminal)
+### Option 1 : Utilisation Locale
+Le code fonctionne de manière autonome sur votre ordinateur.
+1. Lancez le fichier `run_app.bat` (ou le script de démarrage Mac/Windows correspondant).
+2. Ouvrez votre navigateur Web à l'adresse `http://localhost:5000`.
 
-**To Stop (Windows):**
-- Double-click `STOP_APPLICATION.bat` (or use Task Manager)
+### Option 2 : Déploiement Web (Render.com)
+L'application est 100% cloud-ready (gérée en mémoire vive via `io.BytesIO` et `tempfile` pour éviter les collisions entre utilisateurs) et peut être hébergée gratuitement.
+1. Poussez le code sur un dépôt **GitHub** public.
+2. Liez le dépôt à **Render.com** en créant un nouveau **Web Service**.
+3. **Build Command** : `pip install -r requirements.txt`
+4. **Start Command** : `gunicorn app:app`
+5. L'application se mettra à jour automatiquement (CI/CD) à chaque fois qu'un "Push" est fait sur la branche principale GitHub.
 
-Then open your browser to `http://localhost:5000`
+## 🔧 Architecture & Dépendances
 
-## 💡 How It Works
-
-1. Start the application using the startup script
-2. Open the web interface in your browser
-3. Upload your Avid cue sheet (.txt file)
-4. Choose your output format:
-   - **SPOTTING**: PDF with full details (Start, End, Duration, Clip Name, Mute Status)
-   - **ADR VALIDATION**: Excel spreadsheet (Start, End, Duration, Clip Name, Comment)
-   - **ADR RECORDING**: Multiple PDFs in ZIP (Actor + Technician sheets for each track)
-5. Click "Convert" and download your file!
-
-## 📱 Access from Other Devices
-
-The application runs on your PC and can be accessed from any device on your local network:
-- From the same computer: `http://localhost:5000`
-- From other devices: `http://YOUR-IP-ADDRESS:5000` (IP shown when app starts)
-
-## 🔧 Requirements
-
-- Python 3.8 or higher
-- Windows PC or Mac
-- Web browser
-
-## 📖 Need Help?
-
-Check the `INSTALLATION_GUIDE.md` file for detailed instructions and troubleshooting.
-
-## ✨ Features
-
-- Simple drag-and-drop interface
-- **Two output formats:**
-  - **SPOTTING**: Professional PDF with all details including mute status
-  - **ADR VALIDATION**: Clean Excel spreadsheet with 4 columns
-- Converts multiple tracks (SPOTTING FOLEY, SPOTTING FOOTSTEPS, etc.)
-- Handles special characters (É, Ó, etc.)
-- Shortened timecodes (removes frame numbers)
-- Works on local network (access from Mac or PC)
-- No internet connection required
+- **Web Framework** : Flask / Gunicorn
+- **Manipulation PDF** : ReportLab
+- **Manipulation Excel** : OpenPyXL
+- **Manipulation AAF** : pyaaf2
+- Le projet contient un fichier `.gitignore` et `requirements.txt` prêts pour la production.
 
 ---
-
-Made with ❤️ for your daily workflow
+*© Sébastien Bédard - 2025-2026*
