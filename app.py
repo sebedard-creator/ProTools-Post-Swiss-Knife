@@ -5,6 +5,16 @@ import zipfile
 import tempfile
 import io
 from pathlib import Path
+import logging
+import sys
+
+# Forcer les logs vers la sortie standard pour compatibilité avec PyManager
+logging.basicConfig(
+    stream=sys.stdout,
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    force=True
+)
 
 from parsers.avid_parser import parse_cue_sheet, parse_markers
 from generators.pdf_generator import create_pdf, create_markers_pdf, create_adr_acteur_pdf, create_adr_technicien_pdf
