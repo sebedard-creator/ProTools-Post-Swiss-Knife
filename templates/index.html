@@ -233,10 +233,10 @@
                             </span>
                         </label>
                         <label class="radio-option">
-                            <input type="radio" name="format" value="xls_to_aaf">
+                            <input type="radio" name="format" value="xls_to_ptx">
                             <span class="radio-label">
-                                <span class="radio-title">📍 XLS VERS AAF MARKERS</span>
-                                <span class="radio-desc">Génère un AAF de Memory Locations (23.976 fps) — .xls/.xlsx → .aaf</span>
+                                <span class="radio-title">📍 XLS VERS PTX MARKERS</span>
+                                <span class="radio-desc">Génère un fichier de session avec Memory Locations (23.976 fps) — .xls/.xlsx → .ptx</span>
                             </span>
                         </label>
                     </div>
@@ -343,10 +343,10 @@
                     </div>
                 </div>
                 <div class="help-item">
-                    <div class="help-item-title">📍 XLS VERS AAF MARKERS</div>
+                    <div class="help-item-title">📍 XLS VERS PTX MARKERS</div>
                     <div class="help-item-desc">
-                        Génère une piste de marqueurs (Memory Locations) à 23.976 fps à partir d'un fichier Excel. Recherche automatiquement la colonne <em>TC IN</em> et fusionne <em>Description</em> et <em>Notes particulières</em>.<br>
-                        <strong>Entrée :</strong> .xls, .xlsx &nbsp;|&nbsp; <strong>Sortie :</strong> .aaf
+                        Génère une session avec piste de marqueurs (Memory Locations) à 23.976 fps à partir d'un fichier Excel. Recherche automatiquement la colonne <em>TC IN</em> et fusionne <em>Description</em> et <em>Notes particulières</em>.<br>
+                        <strong>Entrée :</strong> .xls, .xlsx &nbsp;|&nbsp; <strong>Sortie :</strong> .ptx
                     </div>
                 </div>
             </div>
@@ -393,15 +393,15 @@
                 // Sélection automatique du bon format selon l'extension
                 const currentFormat = document.querySelector('input[name="format"]:checked').value;
                 if (fileExt === '.xlsx' || fileExt === '.xls') {
-                    if (currentFormat !== 'xls_to_aaf') {
-                        document.querySelector('input[value="xls_to_aaf"]').click();
+                    if (currentFormat !== 'xls_to_ptx') {
+                        document.querySelector('input[value="xls_to_ptx"]').click();
                     }
                 } else if (fileExt === '.csv') {
                     if (!currentFormat.startsWith('csv_')) {
                         document.querySelector('input[value="csv_to_aaf"]').click();
                     }
                 } else if (fileExt === '.txt') {
-                    if (currentFormat.startsWith('csv_') || currentFormat === 'xls_to_aaf') {
+                    if (currentFormat.startsWith('csv_') || currentFormat === 'xls_to_ptx') {
                         document.querySelector('input[value="markers"]').click();
                     }
                 }
@@ -418,7 +418,7 @@
             const fileExt = '.' + file.name.split('.').pop().toLowerCase();
             let isValid = false, expectedType = '';
             if (format === 'csv_to_edl' || format === 'csv_to_aaf' || format === 'csv_to_pdf_tcorder') { isValid = fileExt === '.csv'; expectedType = '.csv'; }
-            else if (format === 'xls_to_aaf') { isValid = ['.xls', '.xlsx'].includes(fileExt); expectedType = 'Excel (.xls, .xlsx)'; }
+            else if (format === 'xls_to_ptx') { isValid = ['.xls', '.xlsx'].includes(fileExt); expectedType = 'Excel (.xls, .xlsx)'; }
             else { isValid = fileExt === '.txt'; expectedType = '.txt'; }
             if (isValid) {
                 convertBtn.disabled = false;
@@ -447,7 +447,7 @@
             else if (format === 'csv_to_edl') action = '/csv-to-edl';
             else if (format === 'csv_to_pdf_tcorder') action = '/csv-to-pdf-tcorder';
             else if (format === 'csv_to_aaf') action = '/csv-to-aaf';
-            else if (format === 'xls_to_aaf') action = '/xls-to-aaf';
+            else if (format === 'xls_to_ptx') action = '/xls-to-ptx';
             uploadForm.action = action;
             convertBtn.disabled = true;
             convertBtn.textContent = 'Conversion en cours...';
@@ -468,7 +468,7 @@
                     csv_to_edl: 'Convertir en EDL',
                     csv_to_pdf_tcorder: 'Convertir en PDF',
                     csv_to_aaf: 'Convertir en AAF',
-                    xls_to_aaf: "Générer l'AAF (Markers)"
+                    xls_to_ptx: "Générer le PTX (Markers)"
                 };
                 convertBtn.textContent = labels[format] || 'Convertir le fichier';
                 if (fileInput.files.length > 0) validateFileType(fileInput.files[0]);

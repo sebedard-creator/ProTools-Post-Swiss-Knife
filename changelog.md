@@ -1,5 +1,10 @@
 # Changelog
 
+## [4.2.0] - PTX API Native Integration
+- Remplacement du vieux moteur AAF par l'API native `pt_api` pour la génération des marqueurs.
+- Création de `generators/ptx_generator.py` qui lit et injecte directement les marqueurs extraits dans une session `template_markers.ptx`.
+- Suppression définitive du code mort (`aaf_generator.py`) pour maintenir l'hygiène du projet.
+- Routage web mis à jour de `/xls-to-aaf` vers `/xls-to-ptx`.
 ## [4.1.0] - Web Deployment & CI/CD
 - Refactorisation complète du système de gestion de fichiers dans `app.py` pour supporter les accès concurrents. Utilisation de `tempfile.TemporaryDirectory` et `io.BytesIO` pour un traitement 100% en mémoire vive (RAM) évitant les collisions.
 - Ajout du fichier `.gitignore` et `requirements.txt` pour préparer le déploiement sur les serveurs cloud.

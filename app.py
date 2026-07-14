@@ -22,6 +22,7 @@ from generators.excel_generator import create_excel, create_excel_tc_order
 from utils.text_utils import extract_track_code_and_actor
 from parsers.excel_parser import parse_excel_markers
 from generators.aaf_generator import create_markers_aaf
+from generators.ptx_generator import create_markers_ptx
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
@@ -344,9 +345,9 @@ def csv_to_aaf():
     flash('Invalid file type. Please upload a .csv file')
     return redirect(url_for('index'))
 
-@app.route('/xls-to-aaf', methods=['POST'])
-def xls_to_aaf():
-    """Convert Excel with markers to AAF"""
+@app.route('/xls-to-ptx', methods=['POST'])
+def xls_to_ptx():
+    """Convert Excel with markers to PTX"""
     if 'file' not in request.files:
         flash('No file selected')
         return redirect(url_for('index'))
@@ -371,21 +372,20 @@ def xls_to_aaf():
                     raise Exception("No valid markers found in the Excel file.")
                 
                 title = filename.rsplit('.', 1)[0]
-                aaf_filename = f"MARKERS_{title}.aaf"
-                aaf_path = os.path.join(temp_dir, aaf_filename)
+                ptx_filename = f"MARKERS_{title}.ptx"
+                ptx_path = os.path.join(temp_dir, ptx_filename)
                 
-                # Framerate is hardcoded to 23.976 as requested
-                create_markers_aaf(markers, aaf_path, framerate=23.976)
+                create_markers_ptx(markers, ptx_path)
                 
                 # Read into memory
-                with open(aaf_path, 'rb') as f:
+                with open(ptx_path, 'rb') as f:
                     return_data = io.BytesIO(f.read())
                     
-            # Send the AAF file from memory
-            return send_file(return_data, as_attachment=True, download_name=aaf_filename, mimetype='application/octet-stream')
+            # Send the PTX file from memory
+            return send_file(return_data, as_attachment=True, download_name=ptx_filename, mimetype='application/octet-stream')
             
         except Exception as e:
-            flash(f'Error converting Excel to AAF: {str(e)}')
+            flash(f'Error converting Excel to PTX: {str(e)}')
             return redirect(url_for('index'))
     
     flash('Invalid file type. Please upload an .xls or .xlsx file')

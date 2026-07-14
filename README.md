@@ -1,48 +1,55 @@
-# 🎬 ProTools Post Swiss Knife (PT SK 4.1)
+# 🎬 ProTools Post Swiss Knife (PT SK 4.2)
 
-Une application web complète conçue pour convertir les exports de session Avid Pro Tools (.txt, .csv, .xls, .xlsx) vers de multiples formats prêts pour la post-production (PDF, Excel, AAF, EDL).
+> **Language Notice:** Please note that the program interface, the technical documentation, and the underlying codebase (including code comments and variables) are entirely written in **French**.
 
-## 📁 Fonctionnalités (Ce que fait le Swiss Knife)
+A comprehensive web application designed to convert Avid Pro Tools session exports (.txt, .csv, .xls, .xlsx) into multiple formats ready for post-production workflows (PDF, Excel, PTX, AAF, EDL).
 
-L'application offre une interface simple (glisser-déposer) permettant de convertir des fichiers en un clic.
+## 📁 Features (What the Swiss Knife does)
 
-### 📍 Markers & Spotting (Entrée: `.txt`)
-- **MARKERS** : Exporte les markers d'une session Pro Tools en PDF compact (Timecode + Nom).
-- **SPOTTING** : Crée un PDF listant tous les clips par track avec timecodes IN/OUT, durée, nom du clip et état muté/non-muté.
+The application provides a simple drag-and-drop web interface allowing you to convert files with a single click.
 
-### 🎙️ ADR (Entrée: `.txt`)
-- **ADR CHARACTER ORDER** : Crée un fichier Excel organisé par personnage. Chaque section affiche le nom suivi du nombre de lignes, puis les cues avec timecodes, durée, texte et commentaire.
-- **ADR TC ORDER** : Crée un fichier Excel avec tous les cues de tous les personnages dans une liste unique triée par timecode.
-- **ADR RECORDING** : Génère un ZIP contenant deux PDFs par personnage (feuille ACTEUR et feuille TECHNICIEN avec prise alternative). 
+### 📍 Markers & Spotting (Input: `.txt`)
+- **MARKERS**: Exports Pro Tools session markers into a compact PDF (Timecode + Name).
+- **SPOTTING**: Creates a PDF listing all clips per track with IN/OUT timecodes, duration, clip name, and muted/unmuted state.
 
-### 🔄 Conversions & AAF
-- **CSV VERS EDL** : Convertit un fichier CSV (provenant d'une template de notes) en EDL Pro Tools (.edl).
-- **CSV VERS PDF (TC ORDER)** : Convertit un CSV de notes en PDF trié par timecode.
-- **CSV VERS AAF (FAKE AUDIO TRACKS)** : Conversion directe d'un CSV vers un AAF contenant des clips audio vides, avec suffixe de mode (Production ou Conception).
-- **XLS VERS AAF MARKERS** : Génère une piste de marqueurs (Memory Locations) à 23.976 fps directement à partir d'un fichier Excel. Recherche automatiquement les colonnes et contourne les limites de caractères de Pro Tools.
+### 🎙️ ADR (Input: `.txt`)
+- **ADR CHARACTER ORDER**: Creates an Excel file organized by character. Each section displays the name followed by the number of lines, then the cues with timecodes, duration, text, and comments.
+- **ADR TC ORDER**: Creates an Excel file containing all cues from all characters in a single list sorted by timecode.
+- **ADR RECORDING**: Generates a ZIP file containing two PDFs per character (ACTOR sheet and TECHNICIAN sheet with alternative takes).
 
-## 🚀 Utilisation (Local vs Cloud)
+### 🔄 Conversions & Session Formats
+- **CSV TO EDL**: Converts a CSV file (from a notes template) into a Pro Tools EDL (.edl).
+- **CSV TO PDF (TC ORDER)**: Converts a notes CSV into a PDF sorted by timecode.
+- **CSV TO AAF (FAKE AUDIO TRACKS)**: Direct conversion from a CSV to an AAF containing empty audio clips, with a mode suffix (Production or Sound Design).
+- **XLS TO PTX MARKERS**: Generates a native Pro Tools session (`.ptx`) containing a Memory Locations (markers) track at 23.976 fps directly from an Excel file. Powered by the custom `pt_api` for native decryption, it automatically maps columns and bypasses Pro Tools' character limits.
 
-### Option 1 : Utilisation Locale
-Le code fonctionne de manière autonome sur votre ordinateur.
-1. Lancez le fichier `run_app.bat` (ou le script de démarrage Mac/Windows correspondant).
-2. Ouvrez votre navigateur Web à l'adresse `http://localhost:5000`.
+## 🚀 Usage (Local vs Cloud)
 
-### Option 2 : Déploiement Web (Render.com)
-L'application est 100% cloud-ready (gérée en mémoire vive via `io.BytesIO` et `tempfile` pour éviter les collisions entre utilisateurs) et peut être hébergée gratuitement.
-1. Poussez le code sur un dépôt **GitHub** public.
-2. Liez le dépôt à **Render.com** en créant un nouveau **Web Service**.
-3. **Build Command** : `pip install -r requirements.txt`
-4. **Start Command** : `gunicorn app:app`
-5. L'application se mettra à jour automatiquement (CI/CD) à chaque fois qu'un "Push" est fait sur la branche principale GitHub.
+### Option 1: Local Usage
+The code can run standalone on your computer.
+1. Run the `run_app.bat` file (or the corresponding Mac/Windows startup script).
+2. Open your web browser at `http://localhost:5000`.
 
-## 🔧 Architecture & Dépendances
+### Option 2: Web Deployment (Render.com)
+The application is 100% cloud-ready (managed entirely in RAM via `io.BytesIO` and `tempfile` to prevent user collisions) and can be hosted for free.
+1. Push the code to a public **GitHub** repository.
+2. Link the repository to **Render.com** by creating a new **Web Service**.
+3. **Build Command**: `pip install -r requirements.txt`
+4. **Start Command**: `gunicorn app:app`
+5. The application will automatically update (CI/CD) every time a "Push" is made to the main GitHub branch.
 
-- **Web Framework** : Flask / Gunicorn
-- **Manipulation PDF** : ReportLab
-- **Manipulation Excel** : OpenPyXL
-- **Manipulation AAF** : pyaaf2
-- Le projet contient un fichier `.gitignore` et `requirements.txt` prêts pour la production.
+## 🔧 Architecture & Dependencies
+
+- **Web Framework**: Flask / Gunicorn
+- **PDF Manipulation**: ReportLab
+- **Excel Manipulation**: OpenPyXL
+- **AAF Manipulation**: pyaaf2
+- **PTX Manipulation**: Custom native API (`pt_api`) loaded via Git in `requirements.txt`.
+- The project includes a `.gitignore` and `requirements.txt` ready for production.
+
+## 📄 License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ---
-*© Sébastien Bédard - 2025-2026*
+*Conçu par Sébastien Bédard*
