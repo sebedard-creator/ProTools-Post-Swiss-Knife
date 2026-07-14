@@ -21,7 +21,6 @@ from generators.pdf_generator import create_pdf, create_markers_pdf, create_adr_
 from generators.excel_generator import create_excel, create_excel_tc_order
 from utils.text_utils import extract_track_code_and_actor
 from parsers.excel_parser import parse_excel_markers
-from generators.aaf_generator import create_markers_aaf
 from generators.ptx_generator import create_markers_ptx
 
 app = Flask(__name__)
