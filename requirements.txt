@@ -4,5 +4,5 @@ openpyxl>=3.1.2
 pyaaf2>=1.7.1
 reportlab>=4.0.7
 gunicorn>=21.2.0
-git+https://github.com/sebedard-creator/pt_api.git
+git+https://github.com/sebedard-creator/pt_api.git@v1.5.1
 xlrd>=2.0.1

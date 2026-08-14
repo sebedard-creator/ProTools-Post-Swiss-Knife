@@ -1,6 +1,6 @@
-# 🎬 ProTools Post Swiss Knife (PT SK 4.2)
+# 🎬 ProTools Post Swiss Knife
 
-> **Language Notice:** Please note that the program interface, the technical documentation, and the underlying codebase (including code comments and variables) are entirely written in **French**.
+> L'interface est offerte en français; le code et la documentation technique contiennent aussi des termes anglais propres aux formats Pro Tools.
 
 A comprehensive web application designed to convert Avid Pro Tools session exports (.txt, .csv, .xls, .xlsx) into multiple formats ready for post-production workflows (PDF, Excel, PTX, AAF, EDL).
 
@@ -22,12 +22,17 @@ The application provides a simple drag-and-drop web interface allowing you to co
 - **CSV TO PDF (TC ORDER)**: Converts a notes CSV into a PDF sorted by timecode.
 - **CSV TO AAF (FAKE AUDIO TRACKS)**: Direct conversion from a CSV to an AAF containing empty audio clips, with a mode suffix (Production or Sound Design).
 - **XLS TO PTX MARKERS**: Generates a native Pro Tools session (`.ptx`) containing a Memory Locations (markers) track at 23.976 fps directly from an Excel file. Powered by the custom `pt_api` for native decryption, it automatically maps columns and bypasses Pro Tools' character limits.
+- **CSV TO PTX**: Rebuilds a native Playback Notes Sync session from its UTF-8 CSV export. Each note becomes a 2-second empty Clip Group at the correct timecode, using the same tracks and PTX template as the mobile app. The accepted time formats are compact `MMSS` (for example `4112`) and legacy session timecode `HH:MM:SS:` (for example `10:41:12:`); impossible timecodes are rejected with their CSV line number.
+
+#### CSV TO PTX — Playback Notes Sync format
+
+The CSV must be UTF-8 and contain the standard headers `TIME CODE`, `MIX`, `DIAL`, `FX`, `STP`, `FOL`, `ADR`, `CON`, `DONE`, and `NOTES`. One category must be marked `X` on every exported row. `FX`, `STP`, `FOL`, and `CON` map respectively to the template tracks `SFX`, `STEPS`, `FOLEY`, and `CONCEP`; clip-group names come from `NOTES`.
 
 ## 🚀 Usage (Local vs Cloud)
 
 ### Option 1: Local Usage
 The code can run standalone on your computer.
-1. Run the `run_app.bat` file (or the corresponding Mac/Windows startup script).
+1. Run `START_WINDOWS.bat` on Windows or `START_MAC.sh` on macOS.
 2. Open your web browser at `http://localhost:5000`.
 
 ### Option 2: Web Deployment (Render.com)
@@ -44,7 +49,7 @@ The application is 100% cloud-ready (managed entirely in RAM via `io.BytesIO` an
 - **PDF Manipulation**: ReportLab
 - **Excel Manipulation**: OpenPyXL
 - **AAF Manipulation**: pyaaf2
-- **PTX Manipulation**: Custom native API (`pt_api`) loaded via Git in `requirements.txt`.
+- **PTX Manipulation**: Custom native API (`pt_api` 1.5.1) loaded from Git through `requirements.txt`.
 - The project includes a `.gitignore` and `requirements.txt` ready for production.
 
 ## 📄 License

@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased]
+- Suppression de `refactor.py` et `templates/index.old`, fichiers historiques non utilisés.
+
+## CSV TO PTX — Playback Notes Sync
+- Ajout de la conversion CSV UTF-8 exporté par Playback Notes Sync vers une session PTX native.
+- Utilise le même template, les mêmes pistes et les mêmes Clip Groups de 2 secondes que Playback Notes Sync.
+- Accepte les formats de temps `MMSS` et `HH:MM:SS:`; les timecodes impossibles sont rejetés avec le numéro de ligne CSV.
+
 ## [4.2.0] - PTX API Native Integration
 - Remplacement du vieux moteur AAF par l'API native `pt_api` pour la génération des marqueurs.
 - Création de `generators/ptx_generator.py` qui lit et injecte directement les marqueurs extraits dans une session `template_markers.ptx`.

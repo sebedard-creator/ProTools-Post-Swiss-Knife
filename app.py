@@ -22,6 +22,7 @@ from generators.excel_generator import create_excel, create_excel_tc_order
 from utils.text_utils import extract_track_code_and_actor
 from parsers.excel_parser import parse_excel_markers
 from generators.ptx_generator import create_markers_ptx
+from generators.pb_notes_ptx_generator import create_pb_notes_ptx
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
@@ -388,6 +389,46 @@ def xls_to_ptx():
             return redirect(url_for('index'))
     
     flash('Invalid file type. Please upload an .xls or .xlsx file')
+    return redirect(url_for('index'))
+
+@app.route('/csv-to-ptx', methods=['POST'])
+def csv_to_ptx():
+    """Rebuild a Playback Notes Sync PTX session from its UTF-8 CSV export."""
+    if 'file' not in request.files:
+        flash('No file selected')
+        return redirect(url_for('index'))
+
+    file = request.files['file']
+    if file.filename == '':
+        flash('No file selected')
+        return redirect(url_for('index'))
+
+    if file and file.filename.rsplit('.', 1)[1].lower() == 'csv':
+        filename = secure_filename(file.filename)
+        try:
+            with tempfile.TemporaryDirectory() as temp_dir:
+                filepath = os.path.join(temp_dir, filename)
+                file.save(filepath)
+
+                title = filename.rsplit('.', 1)[0]
+                ptx_filename = f"{title}.ptx"
+                ptx_path = os.path.join(temp_dir, ptx_filename)
+                create_pb_notes_ptx(filepath, ptx_path)
+
+                with open(ptx_path, 'rb') as exported_file:
+                    return_data = io.BytesIO(exported_file.read())
+
+            return send_file(
+                return_data,
+                as_attachment=True,
+                download_name=ptx_filename,
+                mimetype='application/octet-stream'
+            )
+        except Exception as error:
+            flash(f'Error converting CSV to PTX: {str(error)}')
+            return redirect(url_for('index'))
+
+    flash('Invalid file type. Please upload a .csv file')
     return redirect(url_for('index'))
 
 if __name__ == '__main__':

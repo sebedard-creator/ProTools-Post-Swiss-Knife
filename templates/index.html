@@ -233,6 +233,13 @@
                             </span>
                         </label>
                         <label class="radio-option">
+                            <input type="radio" name="format" value="csv_to_ptx">
+                            <span class="radio-label">
+                                <span class="radio-title">🎬 CSV VERS PTX</span>
+                                <span class="radio-desc">Reconstruit la timeline Playback Notes Sync — .csv → .ptx</span>
+                            </span>
+                        </label>
+                        <label class="radio-option">
                             <input type="radio" name="format" value="xls_to_ptx">
                             <span class="radio-label">
                                 <span class="radio-title">📍 XLS VERS PTX MARKERS</span>
@@ -343,6 +350,13 @@
                     </div>
                 </div>
                 <div class="help-item">
+                    <div class="help-item-title">🎬 CSV VERS PTX</div>
+                    <div class="help-item-desc">
+                        Recrée une session à partir d'un CSV UTF-8 exporté par <em>Playback Notes Sync</em>. Chaque note devient un Clip Group vide de 2 secondes au bon timecode (départ de session 10:00:00:00), sur les pistes <em>MIX, DIAL, SFX, STEPS, FOLEY, ADR</em> ou <em>CONCEP</em>. Le texte de la note est conservé comme nom du Clip Group.<br>
+                        <strong>Entrée :</strong> CSV UTF-8 exporté par Playback Notes Sync &nbsp;|&nbsp; <strong>Sortie :</strong> .ptx
+                    </div>
+                </div>
+                <div class="help-item">
                     <div class="help-item-title">📍 XLS VERS PTX MARKERS</div>
                     <div class="help-item-desc">
                         Génère une session avec piste de marqueurs (Memory Locations) à 23.976 fps à partir d'un fichier Excel. Recherche automatiquement la colonne <em>TC IN</em> et fusionne <em>Description</em> et <em>Notes particulières</em>.<br>
@@ -417,7 +431,7 @@
             const format = document.querySelector('input[name="format"]:checked').value;
             const fileExt = '.' + file.name.split('.').pop().toLowerCase();
             let isValid = false, expectedType = '';
-            if (format === 'csv_to_edl' || format === 'csv_to_aaf' || format === 'csv_to_pdf_tcorder') { isValid = fileExt === '.csv'; expectedType = '.csv'; }
+            if (format === 'csv_to_edl' || format === 'csv_to_aaf' || format === 'csv_to_pdf_tcorder' || format === 'csv_to_ptx') { isValid = fileExt === '.csv'; expectedType = '.csv'; }
             else if (format === 'xls_to_ptx') { isValid = ['.xls', '.xlsx'].includes(fileExt); expectedType = 'Excel (.xls, .xlsx)'; }
             else { isValid = fileExt === '.txt'; expectedType = '.txt'; }
             if (isValid) {
@@ -447,6 +461,7 @@
             else if (format === 'csv_to_edl') action = '/csv-to-edl';
             else if (format === 'csv_to_pdf_tcorder') action = '/csv-to-pdf-tcorder';
             else if (format === 'csv_to_aaf') action = '/csv-to-aaf';
+            else if (format === 'csv_to_ptx') action = '/csv-to-ptx';
             else if (format === 'xls_to_ptx') action = '/xls-to-ptx';
             uploadForm.action = action;
             convertBtn.disabled = true;
@@ -468,6 +483,7 @@
                     csv_to_edl: 'Convertir en EDL',
                     csv_to_pdf_tcorder: 'Convertir en PDF',
                     csv_to_aaf: 'Convertir en AAF',
+                    csv_to_ptx: 'Générer le PTX (Playback Notes)',
                     xls_to_ptx: "Générer le PTX (Markers)"
                 };
                 convertBtn.textContent = labels[format] || 'Convertir le fichier';
