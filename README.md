@@ -15,7 +15,7 @@ The application provides a simple drag-and-drop web interface allowing you to co
 ### 🎙️ ADR (Input: `.txt`)
 - **ADR CHARACTER ORDER**: Creates an Excel file organized by character. Each section displays the name followed by the number of lines, then the cues with timecodes, duration, text, and comments.
 - **ADR TC ORDER**: Creates an Excel file containing all cues from all characters in a single list sorted by timecode.
-- **ADR RECORDING**: Generates a ZIP file containing two PDFs per character (ACTOR sheet and TECHNICIAN sheet with alternative takes).
+- **ADR RECORDING**: Generates a ZIP file containing two PDFs per character (ACTOR sheet and TECHNICIAN sheet with alternative takes). Every page carries a grey `ACTEUR` or `TECHNICIEN` identifier in its upper-right corner.
 
 ### 🔄 Conversions & Session Formats
 - **CSV TO EDL**: Converts a CSV file (from a notes template) into a Pro Tools EDL (.edl).

@@ -197,6 +197,28 @@ def make_text_cell(formatted_text, text_style, show_arrow=False):
     ]))
     return inner
 
+
+def _draw_adr_page_chrome(canvas, total_pages, filename, document_label, footer_font_size):
+    """Draw the ADR sheet identifier and existing footer on every page."""
+    page_width, page_height = landscape(letter)
+    canvas.saveState()
+
+    canvas.setFillColor(colors.HexColor('#777777'))
+    canvas.setFont('Helvetica-Bold', 11)
+    canvas.drawRightString(
+        page_width - 0.5 * inch,
+        page_height - 0.42 * inch,
+        document_label,
+    )
+
+    page_num = canvas.getPageNumber()
+    date_str = datetime.now().strftime("%Y/%m/%d")
+    footer_text = f"Page {page_num}/{total_pages}     {filename}     {date_str}"
+    canvas.setFillColor(colors.black)
+    canvas.setFont('Helvetica-Bold', footer_font_size)
+    canvas.drawCentredString(page_width / 2, 0.5 * inch, footer_text)
+    canvas.restoreState()
+
 def create_adr_acteur_pdf(track, track_code, actor_name, filename, output_path):
     """Create ADR recording PDF for actor (ACTEUR version)"""
     from reportlab.lib.pagesizes import landscape, letter
@@ -357,21 +379,15 @@ def create_adr_acteur_pdf(track, track_code, actor_name, filename, output_path):
         total_pages = temp_doc.page  # Get total page count
         
         # SECOND PASS: Build real PDF with correct page numbers
-        def add_footer(canvas, doc):
-            """Footer callback with total page count"""
-            canvas.saveState()
-            page_num = canvas.getPageNumber()
-            date_str = datetime.now().strftime("%Y/%m/%d")
-            footer_text = f"Page {page_num}/{total_pages}     {filename}     {date_str}"
-            canvas.setFont('Helvetica-Bold', 9)
-            canvas.drawCentredString(landscape(letter)[0]/2, 0.5*inch, footer_text)
-            canvas.restoreState()
+        def add_page_chrome(canvas, doc):
+            """Add the sheet identifier and footer to every actor page."""
+            _draw_adr_page_chrome(canvas, total_pages, filename, "ACTEUR", 9)
         
         # Build the real PDF with fresh elements
         real_doc = SimpleDocTemplate(output_path, pagesize=landscape(letter),
                           rightMargin=0.5*inch, leftMargin=0.5*inch,
                           topMargin=0.75*inch, bottomMargin=0.75*inch)
-        real_doc.build(build_elements(), onFirstPage=add_footer, onLaterPages=add_footer)
+        real_doc.build(build_elements(), onFirstPage=add_page_chrome, onLaterPages=add_page_chrome)
         
     finally:
         # Clean up temporary file
@@ -557,21 +573,15 @@ def create_adr_technicien_pdf(track, track_code, actor_name, filename, output_pa
         total_pages = temp_doc.page  # Get total page count
         
         # SECOND PASS: Build real PDF with correct page numbers
-        def add_footer(canvas, doc):
-            """Footer callback with total page count"""
-            canvas.saveState()
-            page_num = canvas.getPageNumber()
-            date_str = datetime.now().strftime("%Y/%m/%d")
-            footer_text = f"Page {page_num}/{total_pages}     {filename}     {date_str}"
-            canvas.setFont('Helvetica-Bold', 8)
-            canvas.drawCentredString(landscape(letter)[0]/2, 0.5*inch, footer_text)
-            canvas.restoreState()
+        def add_page_chrome(canvas, doc):
+            """Add the sheet identifier and footer to every technician page."""
+            _draw_adr_page_chrome(canvas, total_pages, filename, "TECHNICIEN", 8)
         
         # Build the real PDF with fresh elements
         real_doc = SimpleDocTemplate(output_path, pagesize=landscape(letter),
                           rightMargin=0.5*inch, leftMargin=0.5*inch,
                           topMargin=0.75*inch, bottomMargin=0.75*inch)
-        real_doc.build(build_elements(), onFirstPage=add_footer, onLaterPages=add_footer)
+        real_doc.build(build_elements(), onFirstPage=add_page_chrome, onLaterPages=add_page_chrome)
         
     finally:
         # Clean up temporary file

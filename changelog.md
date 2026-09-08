@@ -1,6 +1,7 @@
 # Changelog
 
 ## [Unreleased]
+- Ajout d'un identifiant gris `ACTEUR` ou `TECHNICIEN` en haut à droite de chaque page des PDFs ADR RECORDING.
 - Suppression de `refactor.py` et `templates/index.old`, fichiers historiques non utilisés.
 
 ## CSV TO PTX — Playback Notes Sync
